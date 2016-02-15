@@ -37,3 +37,4 @@ $ exit
 - https://github.com/norton/docker_aws_dynamodb_local
 - https://github.com/norton/zookeeper-docker
 - https://github.com/norton/kafka-docker
+- https://github.com/norton/cqrs-server
