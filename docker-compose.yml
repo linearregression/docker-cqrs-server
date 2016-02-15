@@ -1,0 +1,55 @@
+version: "2"
+services:
+  cqrs-server:
+    build:
+      context: ./build/cqrs-server
+    volumes:
+      - ./cqrs-server:/usr/src/app
+    links:
+      - dfwfw
+      - kafka
+      - dynamodb
+
+  kafka:
+    build:
+      context: ./build/kafka
+    ports:
+      - "9092"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: "${DOCKER_MACHINE_NAME}"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    links:
+      - dfwfw
+      - zookeeper
+
+  zookeeper:
+    build:
+      context: ./build/zookeeper
+    ports:
+      - "2181"
+    links:
+      - dfwfw
+
+  dynamodb:
+    build:
+      context: ./build/dynamodb
+    ports:
+      - "8000"
+    links:
+      - dfwfw
+
+  dfwfw:
+    build:
+      context: ./build/dfwfw
+    volumes:
+      - /home/docker/dfwfw.conf:/etc/dfwfw.conf
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/containers:/var/lib/docker/containers
+    network_mode: host
+    pid: host
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    restart: always
